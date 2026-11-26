@@ -50,10 +50,12 @@ p{font-size:1.35rem;line-height:1.9}
 .pill.show{display:inline-block}
 .pill small{display:block;direction:ltr;unicode-bidi:isolate;font-family:var(--fr);font-weight:300;font-size:.85rem}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
-.date{font-size:1.35rem}
-.count{display:flex;gap:1.4rem;margin:.6rem 0 0}
-.count b{display:block;font-family:var(--cal);font-weight:400;font-size:2.6rem;line-height:1.2;color:var(--titre)}
-.count span{font-size:1rem}
+.date{font-family:var(--cal);font-size:clamp(1.35rem,6.6vw,1.7rem);white-space:nowrap;line-height:1.35;color:var(--titre);margin-top:.3rem}
+.heure{font-family:var(--cal);font-size:clamp(1.3rem,6.2vw,1.6rem);line-height:1.35;color:var(--titre);margin-top:.5rem}
+.date small,.heure small{display:block;direction:ltr;unicode-bidi:isolate;font-family:var(--fr);font-weight:400;font-size:1.05rem;color:var(--texte)}
+.count{display:flex;gap:1rem;margin:.9rem 0 0;opacity:.85}
+.count b{display:block;font-family:var(--fr);font-weight:300;font-size:1.15rem;line-height:1.2;color:var(--titre)}
+.count span{font-size:.8rem}
 .lieu{direction:ltr;font-family:var(--fr);font-weight:300;font-size:1.15rem;margin-bottom:.2rem}
 .btn{display:flex;flex-direction:column;align-items:center;width:100%;margin-top:.8rem;padding:.6rem 1.2rem;border:1px solid var(--rose);border-radius:2rem;background:rgba(255,255,255,.6);color:var(--texte);text-decoration:none;font:inherit;font-size:1.25rem;cursor:pointer;transition:background .2s,color .2s}
 @media (hover:hover){.btn:hover{background:var(--texte);color:#fff;border-color:var(--texte)}.btn:hover small{color:#fff}}
@@ -65,19 +67,19 @@ p{font-size:1.35rem;line-height:1.9}
 .dots i{width:6px;height:6px;border-radius:50%;background:var(--rose);opacity:.45;transition:all .25s}
 .dots i.on{opacity:1;height:18px;border-radius:3px}
 @media (prefers-reduced-motion:reduce){.hint{animation:none}}
-#intro{position:fixed;inset:0;z-index:30;perspective:1400px;overflow:hidden;cursor:pointer;background:#f3e1de;--emb:url(motif.png)}
-#intro .pc{position:absolute;inset:0;transition:transform 1.9s cubic-bezier(.5,0,.2,1),opacity 1.9s;filter:drop-shadow(0 0 1.5px rgba(150,90,100,.45))}
-#intro .pc i{position:absolute;inset:0;background:#fbefed var(--emb);background-size:170px 220px}
+#intro{position:fixed;inset:0;z-index:30;perspective:1400px;overflow:hidden;cursor:pointer;background:#e6d3c6;--emb:url(motif.png)}
+#intro .pc{position:absolute;inset:0;transition:transform 1.9s cubic-bezier(.5,0,.2,1),opacity 1.9s;filter:drop-shadow(0 0 1.5px rgba(140,100,80,.4))}
+#intro .pc i{position:absolute;inset:0;background:var(--emb),#f2e5da;background-size:170px 220px,auto}
 #intro .pc.l{transform-origin:left center}
 #intro .pc.l i{clip-path:polygon(0 0,50% 50%,50% 100%,0 100%)}
 #intro .pc.r{transform-origin:right center}
 #intro .pc.r i{clip-path:polygon(100% 0,100% 100%,50% 100%,50% 50%)}
-#intro .pc.r i,#intro .pc.l i{background-color:#f8e9e7}
-#intro .pc.t{bottom:50%;transform-origin:center top;z-index:2;filter:drop-shadow(0 3px 4px rgba(125,61,78,.22))}
+#intro .pc.r i,#intro .pc.l i{background:linear-gradient(rgba(120,80,60,.035),rgba(120,80,60,.035)),var(--emb),#f2e5da;background-size:auto,170px 220px,auto}
+#intro .pc.t{bottom:50%;transform-origin:center top;z-index:2;filter:drop-shadow(0 3px 5px rgba(110,75,55,.22))}
 #intro .pc.t i{clip-path:polygon(0 0,100% 0,50% 100%)}
 #intro .seal{position:absolute;left:50%;bottom:0;width:118px;height:118px;margin:0 0 -59px -59px;filter:drop-shadow(0 5px 7px rgba(80,10,25,.4));transition:transform .8s cubic-bezier(.3,1.4,.5,1)}
 #intro .seal img{width:100%;height:100%;display:block}
-#intro .chev{position:absolute;left:50%;top:calc(50% + 82px);width:22px;height:22px;margin-left:-11px;color:#c99aa3;animation:chev 2s ease-in-out infinite;transition:opacity .4s}
+#intro .chev{position:absolute;left:50%;top:calc(50% + 82px);width:22px;height:22px;margin-left:-11px;color:#b99a88;animation:chev 2s ease-in-out infinite;transition:opacity .4s}
 #intro.lift .seal{transform:translateY(-6px) scale(1.07)}
 #intro.lift .chev{animation:none;opacity:0}
 #intro.flap .pc.t{transform:rotateX(178deg);opacity:.0;transition:transform 2s cubic-bezier(.5,0,.25,1),opacity .8s 1.2s}
@@ -125,8 +127,9 @@ p{font-size:1.35rem;line-height:1.9}
   <section class="slide">
     <div class="co h"></div><div class="co b"></div>
     <div class="panel">
-      <h2>موعد الزفاف</h2>
-      <div class="date">الأربعاء 9 ديسمبر 2026</div>
+      <h2 style="font-size:1.6rem">موعد الزفاف</h2>
+      <div class="date">الأربعاء 9 ديسمبر 2026<small>Mercredi 9 décembre 2026</small></div>
+      <div class="heure">الساعة 8:00 مساءً<small>20h00</small></div>
       <div class="count">
         <div><b id="cd">0</b><span>أيام</span></div>
         <div><b id="ch">0</b><span>ساعات</span></div>
@@ -168,7 +171,7 @@ p{font-size:1.35rem;line-height:1.9}
 <script src="config.js"></script>
 <script>
 const $ = id => document.getElementById(id);
-const DATE = "2026-12-09T00:00:00";
+const DATE = "2026-12-09T20:00:00";
 const CFG = window.CFG || {};
 const live = !!(CFG.URL && CFG.KEY && !CFG.URL.includes("XXXX"));
 const q = new URLSearchParams(location.search);
@@ -256,7 +259,7 @@ async function chooseCount(n) {
     setTimeout(() => it.remove(), 4400);
   }
   it.onclick = openCard;
-  setTimeout(openCard, 3000);
+  setTimeout(openCard, 7000);
 })();
 
 function confetti() {
@@ -298,12 +301,4 @@ function tick() {
 }
 tick(); setInterval(tick, 30000);
 
-const slides = [...document.querySelectorAll(".slide")];
-slides.forEach(() => $("dots").appendChild(document.createElement("i")));
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) [...$("dots").children].forEach((d, k) => d.classList.toggle("on", slides[k] === e.target));
-}), { root: $("feed"), threshold: .6 });
-slides.forEach(sl => io.observe(sl));
-</script>
-</body>
-</html>
+const slides = [...document.querySelectorA
