@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Invitations — admin</title>
+<style>
+:root{--fond:#f8ecea;--carte:#fff;--rose:#c0818d;--texte:#7d3d4e;--ok:#3d7a5a;--non:#a8404f;--att:#9a7a3a}
+*{box-sizing:border-box}
+body{margin:0;padding:1rem;background:var(--fond);color:var(--texte);font:400 1rem/1.5 system-ui,sans-serif;max-width:640px;margin-inline:auto}
+h1{font-size:1.5rem;margin:.4rem 0 1rem}
+.card{background:var(--carte);border:1px solid rgba(192,129,141,.4);border-radius:.9rem;padding:1rem;margin-bottom:1rem}
+input{width:100%;padding:.7rem;border:1px solid var(--rose);border-radius:.6rem;font:inherit;color:var(--texte);margin-top:.5rem;direction:auto}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.names input{margin-top:0}
+.more{margin-top:.6rem;font-size:.9rem;padding:.4rem .9rem}
+label{display:block;font-size:.9rem;margin-top:.7rem}
+button{padding:.6rem 1rem;border-radius:2rem;border:1px solid var(--texte);background:transparent;color:var(--texte);font:inherit;cursor:pointer}
+button.main{background:var(--texte);color:#fff;margin-top:.9rem;width:100%}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;text-align:center}
+.stats b{display:block;font-size:1.6rem}
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:.2rem 0 .8rem}
+.tabs button.on{background:var(--texte);color:#fff}
+.row{padding:.8rem 0;border-top:1px solid rgba(192,129,141,.3)}
+.row:first-child{border-top:0}
+.top{display:flex;justify-content:space-between;gap:.5rem;align-items:baseline}
+.nom{font-weight:600;font-size:1.1rem;direction:auto}
+.badge{font-size:.85rem;padding:.15rem .6rem;border-radius:1rem;white-space:nowrap}
+.yes{background:#e3f1e9;color:var(--ok)}.no{background:#f7e1e4;color:var(--non)}.pending{background:#f5eedb;color:var(--att)}
+.btns{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}.btns button,.btns a{font-size:.85rem;padding:.4rem .8rem}
+a.wa{border:1px solid var(--texte);border-radius:2rem;color:var(--texte);text-decoration:none}
+.err{color:var(--non);margin-top:.5rem;min-height:1.3rem}
+.hide{display:none}
+</style>
+</head>
+<body>
+<h1>Invitations du mariage</h1>
+
+<div class="card" id="login">
+  <label for="pw">Mot de passe admin</label>
+  <input id="pw" type="password" autocomplete="current-password">
+  <button class="main" id="go">Entrer</button>
+  <div class="err" id="lerr"></div>
+</div>
+
+<div id="app" class="hide">
+  <div class="card">
+    <div class="stats">
+      <div><b id="sOk">0</b>confirmées</div>
+      <div><b id="sPend">0</b>en attente</div>
+      <div><b id="sNo">0</b>refusées</div>
+    </div>
+    <div id="sPers" style="text-align:center;margin-top:.6rem;font-size:.9rem"></div>
+  </div>
+
+  <div class="card">
+    <b>Nouvelle invitation</b>
+    <label>Noms</label>
+    <div class="names" id="names"></div>
+    <button type="button" class="more" id="more">+ Ajouter un nom</button>
+    <label for="nb">Nombre de personnes invitées</label>
+    <input id="nb" type="number" min="1" max="99" value="1">
+    <button class="main" id="add">Créer le lien</button>
+    <div class="err" id="aerr"></div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="card" id="list"></div>
+  <button id="refresh">Actualiser</button>
+</div>
+
+<script src="config.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const CFG = window.CFG || {};
+let pass = sessionStorage.getItem("p") || "", data = [], filter = "all", nbTouched = false;
+
+async function rpc(fn, args) {
+  const r = await fetch(CFG.URL + "/rest/v1/rpc/" + fn, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: CFG.KEY, ...(CFG.KEY.startsWith("sb_") ? {} : { Authorization: "Bearer " + CFG.KEY }) },
+    body: JSON.stringify(args)
+  });
+  if (!r.ok) throw new Error((await r.text()) || r.status);
+  const t = await r.text(); return t ? JSON.parse(t) : null;
+}
+const base = () => new URL("./", location.href).href;
+const link = id => base() + "?id=" + id;
+const joinNames = a => a.length < 2 ? a.join("") : a.slice(0, -1).join("، ") + " و " + a[a.length - 1];
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const LBL = { yes: "Confirmé", no: "Refusé", pending: "En attente" };
+
+function copy(text, b) {
+  const ok = () => { const t = b.textContent; b.textContent = "Copié ✓"; setTimeout(() => b.textContent = t, 1400); };
+  (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(ok).catch(() => {
+    const ta = el("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); ok();
+  });
+}
+
+function render() {
+  const c = s => data.filter(r => r.status === s);
+  $("sOk").textContent = c("yes").length; $("sPend").textContent = c("pending").length; $("sNo").textContent = c("no").length;
+  const sum = a => a.reduce((n, r) => n + r.nb, 0);
+  $("sPers").textContent = "Personnes : " + sum(c("yes")) + " confirmées sur " + sum(data) + " invitées";
+  const tabs = $("tabs"); tabs.innerHTML = "";
+  [["all", "Tous"], ["yes", "Confirmés"], ["pending", "En attente"], ["no", "Refusés"]].forEach(([k, l]) => {
+    const b = el("button", k === filter ? "on" : "", l); b.onclick = () => { filter = k; render(); }; tabs.appendChild(b);
+  });
+  const list = $("list"); list.innerHTML = "";
+  const rows = data.filter(r => filter === "all" || r.status === filter);
+  if (!rows.length) list.appendChild(el("div", "", "Aucune invitation ici pour l’instant."));
+  rows.forEach(r => {
+    const d = el("div", "row"), top = el("div", "top");
+    top.append(el("span", "nom", r.names), el("span", "badge " + r.status, LBL[r.status]));
+    d.append(top, el("div", "", r.nb + (r.nb > 1 ? " personnes" : " personne")));
+    const btns = el("div", "btns");
+    const cp = el("button", "", "Copier le lien"); cp.onclick = () => copy(link(r.id), cp);
+    const wa = el("a", "wa", "WhatsApp"); wa.target = "_blank"; wa.rel = "noopener";
+    wa.href = "https://wa.me/?text=" + encodeURIComponent("السلام عليكم، تفضلوا بدعوتنا لحفل زفافنا\n" + link(r.id));
+    const del = el("button", "", "Supprimer");
+    del.onclick = async () => { if (confirm("Supprimer l’invitation de " + r.names + " ?")) { await rpc("admin_delete", { p_pass: pass, p_id: r.id }); load(); } };
+    btns.append(cp, wa, del); d.appendChild(btns); list.appendChild(d);
+  });
+}
+
+async function load() {
+  try { data = await rpc("admin_list", { p_pass: pass }); $("login").classList.add("hide"); $("app").classList.remove("hide"); render(); }
+  catch (e) { sessionStorage.removeItem("p"); $("app").classList.add("hide"); $("login").classList.remove("hide"); $("lerr").textContent = pass ? "Mot de passe incorrect, ou Supabase mal configuré (config.js)." : ""; pass = ""; }
+}
+
+$("go").onclick = () => { pass = $("pw").value; sessionStorage.setItem("p", pass); load(); };
+$("pw").onkeydown = e => { if (e.key === "Enter") $("go").click(); };
+$("refresh").onclick = load;
+const inputs = () => [...document.querySelectorAll("#names input")];
+const filled = () => inputs().map(i => i.value.trim()).filter(Boolean);
+function autoNb() { if (!nbTouched) $("nb").value = Math.max(1, filled().length); }
+function addInput() { const i = el("input"); i.placeholder = "Nom " + (inputs().length + 1); i.oninput = autoNb; $("names").appendChild(i); return i; }
+function resetForm() { $("names").innerHTML = ""; for (let k = 0; k < 3; k++) addInput(); $("nb").value = 1; nbTouched = false; }
+$("nb").oninput = () => nbTouched = true;
+$("more").onclick = () => addInput().focus();
+resetForm();
+$("add").onclick = async () => {
+  const names = filled();
+  const nb = parseInt($("nb").value, 10);
+  if (!names.length) { $("aerr").textContent = "Écris au moins un nom."; return; }
+  if (!(nb >= 1)) { $("aerr").textContent = "Indique le nombre de personnes."; return; }
+  try {
+    await rpc("admin_create", { p_pass: pass, p_names: joinNames(names), p_nb: nb });
+    resetForm(); $("aerr").textContent = ""; filter = "all"; load();
+  } catch (e) { $("aerr").textContent = "Échec de la création."; }
+};
+if (pass) load();
+setInterval(() => { if (pass && !$("app").classList.contains("hide")) load(); }, 30000);
+</script>
+</body>
+</html>
