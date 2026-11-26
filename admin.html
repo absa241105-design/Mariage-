@@ -11,7 +11,7 @@
 body{margin:0;padding:1rem;background:var(--fond);color:var(--texte);font:400 1rem/1.5 system-ui,sans-serif;max-width:640px;margin-inline:auto}
 h1{font-size:1.5rem;margin:.4rem 0 1rem}
 .card{background:var(--carte);border:1px solid rgba(192,129,141,.4);border-radius:.9rem;padding:1rem;margin-bottom:1rem}
-input{width:100%;padding:.7rem;border:1px solid var(--rose);border-radius:.6rem;font:inherit;color:var(--texte);margin-top:.5rem;direction:auto}
+select,input{width:100%;padding:.7rem;border:1px solid var(--rose);border-radius:.6rem;font:inherit;color:var(--texte);margin-top:.5rem;direction:auto}
 .names{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.names input{margin-top:0}
 .more{margin-top:.6rem;font-size:.9rem;padding:.4rem .9rem}
 label{display:block;font-size:.9rem;margin-top:.7rem}
@@ -55,6 +55,15 @@ a.wa{border:1px solid var(--texte);border-radius:2rem;color:var(--texte);text-de
 
   <div class="card">
     <b>Nouvelle invitation</b>
+    <label for="titre">Formule</label>
+    <select id="titre">
+      <option value="الحاج|وعائلته">الحاج … وعائلته</option>
+      <option value="السيد|وعائلته">السيد … وعائلته</option>
+      <option value="الحاجة|">الحاجة …</option>
+      <option value="العزيز|وعائلته">العزيز … وعائلته</option>
+      <option value="العزيز|">العزيز …</option>
+      <option value="العزيزة|">العزيزة …</option>
+    </select>
     <label>Noms</label>
     <div class="names" id="names"></div>
     <button type="button" class="more" id="more">+ Ajouter un nom</button>
@@ -149,7 +158,9 @@ $("add").onclick = async () => {
   if (!names.length) { $("aerr").textContent = "Écris au moins un nom."; return; }
   if (!(nb >= 1)) { $("aerr").textContent = "Indique le nombre de personnes."; return; }
   try {
-    await rpc("admin_create", { p_pass: pass, p_names: joinNames(names), p_nb: nb });
+    const [pre, suf] = $("titre").value.split("|");
+    const full = pre + " " + joinNames(names) + (suf ? " " + suf : "");
+    await rpc("admin_create", { p_pass: pass, p_names: full, p_nb: nb });
     resetForm(); $("aerr").textContent = ""; filter = "all"; load();
   } catch (e) { $("aerr").textContent = "Échec de la création."; }
 };
