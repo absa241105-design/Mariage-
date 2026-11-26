@@ -162,7 +162,7 @@ $("add").onclick = async () => {
     const full = pre + " " + joinNames(names) + (suf ? " " + suf : "");
     await rpc("admin_create", { p_pass: pass, p_names: full, p_nb: nb });
     resetForm(); $("aerr").textContent = ""; filter = "all"; load();
-  } catch (e) { $("aerr").textContent = "Échec de la création."; }
+  } catch (e) { $("aerr").textContent = "Échec de la création." + e.message ; }
 };
 if (pass) load();
 setInterval(() => { if (pass && !$("app").classList.contains("hide")) load(); }, 30000);
