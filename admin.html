@@ -120,7 +120,7 @@ function render() {
     const btns = el("div", "btns");
     const cp = el("button", "", "Copier le lien"); cp.onclick = () => copy(link(r.id), cp);
     const wa = el("a", "wa", "WhatsApp"); wa.target = "_blank"; wa.rel = "noopener";
-    wa.href = "https://wa.me/?text=" + encodeURIComponent("السلام عليكم، تفضلوا بدعوتنا لحفل زفافنا\n" + link(r.id));
+    wa.href = "https://wa.me/?text=" + encodeURIComponent("لا تكتمل فرحتنا إلا بحضوركم ومشاركتنا أجمل لحظات العمر\n" + link(r.id));
     const del = el("button", "", "Supprimer");
     del.onclick = async () => { if (confirm("Supprimer l’invitation de " + r.names + " ?")) { await rpc("admin_delete", { p_pass: pass, p_id: r.id }); load(); } };
     btns.append(cp, wa, del); d.appendChild(btns); list.appendChild(d);
