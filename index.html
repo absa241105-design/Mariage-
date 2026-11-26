@@ -247,7 +247,7 @@ document.querySelectorAll("[data-s]").forEach(b => b.onclick = async () => {
     catch (e) { $("thanks").innerHTML = ERR; $("thanks").hidden = false; return; }
   }
   mark(b.dataset.s);
-  if (b.dataset.s === "yes") { confetti(); setTimeout(askCount, 1400); }
+    if (b.dataset.s === "yes") { confetti(); askCount(); }
 });
 
 function askCount() {
