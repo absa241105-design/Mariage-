@@ -101,7 +101,8 @@ function render() {
   const c = s => data.filter(r => r.status === s);
   $("sOk").textContent = c("yes").length; $("sPend").textContent = c("pending").length; $("sNo").textContent = c("no").length;
   const sum = a => a.reduce((n, r) => n + r.nb, 0);
-  $("sPers").textContent = "Personnes : " + sum(c("yes")) + " confirmées sur " + sum(data) + " invitées";
+  const venus = c("yes").reduce((n, r) => n + (r.coming || r.nb), 0);
+  $("sPers").textContent = "Personnes : " + venus + " viendront, sur " + sum(data) + " invitées";
   const tabs = $("tabs"); tabs.innerHTML = "";
   [["all", "Tous"], ["yes", "Confirmés"], ["pending", "En attente"], ["no", "Refusés"]].forEach(([k, l]) => {
     const b = el("button", k === filter ? "on" : "", l); b.onclick = () => { filter = k; render(); }; tabs.appendChild(b);
@@ -112,7 +113,10 @@ function render() {
   rows.forEach(r => {
     const d = el("div", "row"), top = el("div", "top");
     top.append(el("span", "nom", r.names), el("span", "badge " + r.status, LBL[r.status]));
-    d.append(top, el("div", "", r.nb + (r.nb > 1 ? " personnes" : " personne")));
+    const info = r.status === "yes"
+      ? (r.coming || r.nb) + " / " + r.nb + " viendront" + (r.coming || r.nb === 1 ? "" : " (nombre pas encore précisé)")
+      : r.nb + (r.nb > 1 ? " personnes invitées" : " personne invitée");
+    d.append(top, el("div", "", info));
     const btns = el("div", "btns");
     const cp = el("button", "", "Copier le lien"); cp.onclick = () => copy(link(r.id), cp);
     const wa = el("a", "wa", "WhatsApp"); wa.target = "_blank"; wa.rel = "noopener";
