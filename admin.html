@@ -82,7 +82,7 @@ a.wa{border:1px solid var(--texte);border-radius:2rem;color:var(--texte);text-de
 <script>
 const $ = id => document.getElementById(id);
 const CFG = window.CFG || {};
-let pass = sessionStorage.getItem("p") || "", data = [], filter = "all", nbTouched = false;
+let pass = "Mama@1984@2005", data = [], filter = "all", nbTouched = false;
 
 async function rpc(fn, args) {
   const r = await fetch(CFG.URL + "/rest/v1/rpc/" + fn, {
