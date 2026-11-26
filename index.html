@@ -47,8 +47,10 @@ p{font-size:1.35rem;line-height:1.9}
 .orn{display:flex;align-items:center;gap:.6rem;width:85%;margin:.7rem auto .9rem;color:var(--rose)}
 .orn::before,.orn::after{content:"";flex:1;height:1px;background:rgba(192,129,141,.6)}
 .orn svg{width:1.6rem;height:1.6rem}
-.pill{display:none;margin-top:1rem;padding:.4rem 1.4rem;border:1px solid var(--rose);border-radius:2rem;font-size:1.2rem;background:rgba(255,255,255,.5)}
+.pill{display:none;margin-top:1rem;padding:.4rem 1.6rem;border:1px solid var(--rose);border-radius:1.4rem;font-size:1.2rem;background:rgba(255,255,255,.5)}
 .pill.show{display:inline-block}
+.pill small{display:block;direction:ltr;unicode-bidi:isolate;font-family:var(--fr);font-weight:300;font-size:.85rem}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
 .date{font-size:1.35rem}
 .count{display:flex;gap:1.4rem;margin:.6rem 0 0}
 .count b{display:block;font-family:var(--cal);font-weight:400;font-size:2.6rem;line-height:1.2;color:var(--titre)}
@@ -141,7 +143,13 @@ async function rpc(fn, args) {
 }
 function showCard(names, nb) {
   if (names) { $("hello").textContent = "الأعزاء"; $("guest").textContent = names; $("guest").style.display = ""; }
-  if (nb) { $("pill").textContent = "عدد الأشخاص : " + nb; $("pill").classList.add("show"); }
+  if (nb) {
+    $("pill").textContent = "عدد الأشخاص : " + nb;
+    const fr = document.createElement("small");
+    fr.textContent = "Nombre de personnes : " + nb;
+    $("pill").appendChild(fr);
+    $("pill").classList.add("show");
+  }
 }
 function mark(status) {
   document.querySelectorAll("[data-s]").forEach(x => x.classList.toggle("on", x.dataset.s === status));
@@ -161,7 +169,39 @@ document.querySelectorAll("[data-s]").forEach(b => b.onclick = async () => {
     catch (e) { $("thanks").innerHTML = ERR; $("thanks").hidden = false; return; }
   }
   mark(b.dataset.s);
+  if (b.dataset.s === "yes") confetti();
 });
+
+function confetti() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const old = document.getElementById("confetti"); if (old) old.remove();
+  const c = document.createElement("canvas"); c.id = "confetti"; document.body.appendChild(c);
+  const x = c.getContext("2d"), dpr = devicePixelRatio || 1;
+  const W = c.width = innerWidth * dpr, H = c.height = innerHeight * dpr;
+  const colors = ["#e8b4bc", "#c0818d", "#f6d6db", "#d4af7a", "#ffffff", "#b0677a"];
+  const parts = Array.from({ length: 160 }, (_, i) => ({
+    x: W / 2 + (Math.random() - .5) * W * .3, y: H * .55,
+    vx: (Math.random() - .5) * 16 * dpr, vy: -(Math.random() * 16 + 10) * dpr,
+    w: (Math.random() * 7 + 5) * dpr, h: (Math.random() * 5 + 3) * dpr,
+    r: Math.random() * 6, vr: (Math.random() - .5) * .3,
+    c: colors[i % colors.length], petal: Math.random() < .45
+  }));
+  const t0 = performance.now();
+  (function frame(t) {
+    const k = (t - t0) / 1000;
+    x.clearRect(0, 0, W, H);
+    x.globalAlpha = Math.max(0, Math.min(1, 3.2 - k));
+    for (const p of parts) {
+      p.vy += .45 * dpr; p.vx *= .99; p.vy *= .99;
+      p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c;
+      if (p.petal) { x.beginPath(); x.ellipse(0, 0, p.w * .8, p.h * .7, 0, 0, Math.PI * 2); x.fill(); }
+      else x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      x.restore();
+    }
+    if (k < 3.2) requestAnimationFrame(frame); else c.remove();
+  })(t0);
+}
 
 function tick() {
   const d = Math.max(0, new Date(DATE) - new Date());
