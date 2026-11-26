@@ -71,14 +71,14 @@ p{font-size:clamp(1.05rem,5vw,1.3rem);line-height:1.9;white-space:nowrap}
 .dots i{width:6px;height:6px;border-radius:50%;background:var(--rose);opacity:.45;transition:all .25s}
 .dots i.on{opacity:1;height:18px;border-radius:3px}
 @media (prefers-reduced-motion:reduce){.hint{animation:none}}
-#intro{position:fixed;inset:0;z-index:30;perspective:1400px;overflow:hidden;cursor:pointer;background:#e6d3c6;--emb:url(motif.png)}
+#intro{position:fixed;inset:0;z-index:30;perspective:1400px;overflow:hidden;cursor:pointer;background:#e6d3c6}
 #intro .pc{position:absolute;inset:0;transition:transform 1.9s cubic-bezier(.5,0,.2,1),opacity 1.9s;filter:drop-shadow(0 0 1.5px rgba(140,100,80,.4))}
-#intro .pc i{position:absolute;inset:0;background:var(--emb),#f2e5da;background-size:170px 220px,auto}
+#intro .pc i{position:absolute;inset:0;overflow:hidden}
+#intro .pc i img{position:absolute;top:0;left:0;width:100vw;height:100vh;object-fit:cover;display:block}
 #intro .pc.l{transform-origin:left center}
 #intro .pc.l i{clip-path:polygon(0 0,50% 50%,50% 100%,0 100%)}
 #intro .pc.r{transform-origin:right center}
 #intro .pc.r i{clip-path:polygon(100% 0,100% 100%,50% 100%,50% 50%)}
-#intro .pc.r i,#intro .pc.l i{background:linear-gradient(rgba(120,80,60,.035),rgba(120,80,60,.035)),var(--emb),#f2e5da;background-size:auto,170px 220px,auto}
 #intro .pc.t{bottom:50%;transform-origin:center top;z-index:2;filter:drop-shadow(0 3px 5px rgba(110,75,55,.22))}
 #intro .pc.t i{clip-path:polygon(0 0,100% 0,50% 100%)}
 #intro .seal{position:absolute;left:50%;bottom:0;width:118px;height:118px;margin:0 0 -59px -59px;filter:drop-shadow(0 5px 7px rgba(80,10,25,.4));transition:transform .8s cubic-bezier(.3,1.4,.5,1)}
@@ -167,8 +167,8 @@ p{font-size:clamp(1.05rem,5vw,1.3rem);line-height:1.9;white-space:nowrap}
 </main>
 <nav class="dots" id="dots" aria-hidden="true"></nav>
 <div id="intro" role="button" aria-label="فتح الدعوة / Ouvrir l'invitation">
-  <div class="pc l"><i></i></div><div class="pc r"><i></i></div>
-  <div class="pc t"><i></i><div class="seal"><img src="sceau.png" alt=""></div></div>
+  <div class="pc l"><i><img src="enveloppe.jpg" alt=""></i></div><div class="pc r"><i><img src="enveloppe.jpg" alt=""></i></div>
+  <div class="pc t"><i><img src="enveloppe.jpg" alt=""></i><div class="seal"><img src="sceau.png" alt=""></div></div>
   <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
 </div>
 <script>
@@ -317,4 +317,4 @@ slides.forEach(() => $("dots").appendChild(document.createElement("i")));
 const io = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) [...$("dots").children].forEach((d, k) => d.classList.toggle("on", slides[k] === e.target));
 }), { root: $("feed"), threshold: .6 });
-slide
+slides.forEach(sl => io.observ
