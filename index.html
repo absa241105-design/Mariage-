@@ -4,52 +4,63 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f8ecea">
+<meta name="color-scheme" content="only light">
 <title>دعوة زفاف عباس وساره</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:wght@400;700&family=Jost:wght@300;400&display=swap" rel="stylesheet">
 <style>
-:root{--fond:#f8ecea;--fond2:#f6e3e3;--rose:#c0818d;--titre:#b0677a;--texte:#7d3d4e;
+:root{color-scheme:only light;--fond:#f8ecea;--rose:#c0818d;--titre:#b0677a;--texte:#7d3d4e;
 --cal:"Aref Ruqaa","Amiri",serif;--ar:"Amiri","Noto Naskh Arabic",serif;--fr:"Jost",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%;background:var(--fond);color:var(--texte);font-family:var(--ar)}
 .feed{height:100dvh;max-width:480px;margin-inline:auto;overflow-y:scroll;scroll-snap-type:y mandatory;overscroll-behavior:contain;scrollbar-width:none}
 .feed::-webkit-scrollbar{display:none}
-.slide{height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem 2rem;background:linear-gradient(var(--fond),var(--fond2))}
-.slide:nth-child(even){background:linear-gradient(var(--fond2),var(--fond))}
-.slide::before{content:"";position:absolute;z-index:-2;inset:calc(1rem + env(safe-area-inset-top,0px)) 1rem calc(1rem + env(safe-area-inset-bottom,0px));border:1px solid rgba(192,129,141,.55);border-radius:9rem 9rem 1rem 1rem;pointer-events:none}
-.fl{position:absolute;z-index:-1;width:min(64vw,300px);height:auto;pointer-events:none}
-.fl.h{top:0;left:0}.fl.b{bottom:0;right:0}
+.slide{height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1.4rem;background:var(--fond)}
+.slide:not(.cover)::before{content:"";position:absolute;inset:-40px;z-index:-3;background:url(cover.jpg) center/cover;filter:blur(16px) saturate(1.15);opacity:.75}
+.slide:not(.cover)::after{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(120% 70% at 50% 50%,rgba(250,240,238,.35),rgba(248,236,234,.1))}
+.co{position:absolute;z-index:-1;pointer-events:none;background-image:url(cover.jpg);background-repeat:no-repeat;
+  -webkit-mask-composite:source-in;mask-composite:intersect}
+.co.h{top:0;left:0;width:min(78vw,374px);aspect-ratio:500/570;background-size:204.8% auto;background-position:0 0;
+  -webkit-mask-image:linear-gradient(to right,#000 40%,transparent 54%),linear-gradient(to bottom,#000 62%,transparent 92%);
+  mask-image:linear-gradient(to right,#000 40%,transparent 54%),linear-gradient(to bottom,#000 62%,transparent 92%)}
+.co.b{bottom:0;right:0;width:min(78vw,374px);aspect-ratio:504/756;background-size:203.2% auto;background-position:100% 100%;
+  -webkit-mask-image:linear-gradient(to right,transparent 48%,#000 62%),linear-gradient(to bottom,transparent 8%,#000 30%);
+  mask-image:linear-gradient(to right,transparent 48%,#000 62%),linear-gradient(to bottom,transparent 8%,#000 30%)}
+.panel{position:relative;width:min(88%,380px);min-height:58%;justify-content:center;padding:3.8rem 1.4rem 2.2rem;border:1px solid rgba(192,129,141,.6);border-radius:12rem 12rem 1.4rem 1.4rem;
+  background:rgba(253,246,245,.78);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 10px 40px rgba(176,103,122,.18);
+  display:flex;flex-direction:column;align-items:center}
+.panel::before{content:"";position:absolute;inset:6px;border:1px solid rgba(192,129,141,.3);border-radius:11.6rem 11.6rem 1.1rem 1.1rem;pointer-events:none}
 .cover{background:var(--fond)}
 .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:-1}
-.cover::before{display:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .cdate{position:absolute;top:88.6%;left:0;right:0;font-family:var(--cal);font-size:1.2rem;color:var(--texte)}
 .hint{position:absolute;left:1.6rem;bottom:calc(1.3rem + env(safe-area-inset-bottom,0px));font-size:1rem;color:var(--texte);animation:bob 1.8s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-7px)}}
 h2{font-family:var(--cal);font-weight:400;font-size:2rem;color:var(--titre);line-height:1.4}
+h2 small,.btn small,.thanks small{direction:ltr;unicode-bidi:isolate}
 h2 small,.btn small{display:block;font-family:var(--fr);font-weight:300;font-size:.95rem;color:var(--texte)}
-.bism{font-family:var(--cal);font-size:1.7rem;color:var(--titre);margin-bottom:1.2rem}
-.hello{font-size:1.4rem}
-.guest{font-family:var(--cal);font-size:clamp(2.1rem,10vw,3rem);line-height:1.5;color:var(--titre);margin-bottom:.4rem}
-p{font-size:1.4rem;line-height:1.9;max-width:20em}
-.orn{display:flex;align-items:center;gap:.6rem;width:min(78%,17rem);margin:.8rem auto 1rem}
+.bism{font-family:var(--cal);font-size:1.4rem;color:var(--titre);margin-bottom:1rem}
+.hello{font-size:1.3rem}
+.guest{font-family:var(--cal);font-size:clamp(2rem,9vw,2.7rem);line-height:1.5;color:var(--titre)}
+p{font-size:1.35rem;line-height:1.9}
+.orn{display:flex;align-items:center;gap:.6rem;width:85%;margin:.7rem auto .9rem;color:var(--rose)}
 .orn::before,.orn::after{content:"";flex:1;height:1px;background:rgba(192,129,141,.6)}
-.orn img{width:2.3rem;mix-blend-mode:multiply}
-.pill{display:none;margin-top:1.2rem;padding:.4rem 1.4rem;border:1px solid var(--rose);border-radius:2rem;font-size:1.2rem}
+.orn svg{width:1.6rem;height:1.6rem}
+.pill{display:none;margin-top:1rem;padding:.4rem 1.4rem;border:1px solid var(--rose);border-radius:2rem;font-size:1.2rem;background:rgba(255,255,255,.5)}
 .pill.show{display:inline-block}
-.date{font-size:1.4rem}
-.count{display:flex;gap:1.5rem;margin:.8rem 0 .2rem}
-.count b{display:block;font-family:var(--cal);font-weight:400;font-size:2.8rem;line-height:1.2;color:var(--titre)}
-.count span{font-size:1.05rem}
-.lieu{direction:ltr;font-family:var(--fr);font-weight:300;font-size:1.2rem;margin-bottom:.4rem}
-.btn{display:flex;flex-direction:column;align-items:center;min-width:15rem;margin-top:.8rem;padding:.65rem 1.6rem;border:1px solid var(--rose);border-radius:2rem;background:rgba(255,255,255,.35);color:var(--texte);text-decoration:none;font:inherit;font-size:1.3rem;cursor:pointer;transition:background .2s,color .2s}
+.date{font-size:1.35rem}
+.count{display:flex;gap:1.4rem;margin:.6rem 0 0}
+.count b{display:block;font-family:var(--cal);font-weight:400;font-size:2.6rem;line-height:1.2;color:var(--titre)}
+.count span{font-size:1rem}
+.lieu{direction:ltr;font-family:var(--fr);font-weight:300;font-size:1.15rem;margin-bottom:.2rem}
+.btn{display:flex;flex-direction:column;align-items:center;width:100%;margin-top:.8rem;padding:.6rem 1.2rem;border:1px solid var(--rose);border-radius:2rem;background:rgba(255,255,255,.6);color:var(--texte);text-decoration:none;font:inherit;font-size:1.25rem;cursor:pointer;transition:background .2s,color .2s}
 .btn:hover,.btn:focus-visible,.btn.on{background:var(--texte);color:#fff;border-color:var(--texte);outline:none}
 .btn:hover small,.btn:focus-visible small,.btn.on small{color:#fff}
-.thanks{margin-top:1rem;font-size:1.15rem;min-height:3.2rem}
-.thanks small{display:block;font-family:var(--fr);font-weight:300;font-size:.9rem}
-.dots{position:fixed;inset-inline-end:1.3rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:.6rem;z-index:5}
-.dots i{width:6px;height:6px;border-radius:50%;background:var(--rose);opacity:.4;transition:all .25s}
+.thanks{margin-top:.9rem;font-size:1.1rem}
+.thanks small{display:block;font-family:var(--fr);font-weight:300;font-size:.85rem}
+.dots{position:fixed;inset-inline-end:max(.7rem,calc(50vw - 240px + .7rem));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:.6rem;z-index:5}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--rose);opacity:.45;transition:all .25s}
 .dots i.on{opacity:1;height:18px;border-radius:3px}
 @media (prefers-reduced-motion:reduce){.hint{animation:none}}
 </style>
@@ -65,37 +76,43 @@ p{font-size:1.4rem;line-height:1.9;max-width:20em}
   </section>
 
   <section class="slide">
-    <img class="fl h" src="flora-haut.webp" alt=""><img class="fl b" src="flora-bas.webp" alt="">
-    <div class="bism">بسم الله الرحمن الرحيم</div>
-    <div class="hello" id="hello">أحبتنا الكرام</div>
-    <div class="guest" id="guest"></div>
-    <div class="orn"><img src="orn.png" alt=""></div>
-    <p>ندعوكم لمشاركتنا فرحة زفافنا</p>
-    <div class="pill" id="pill"></div>
-  </section>
-
-  <section class="slide">
-    <img class="fl h" src="flora-haut.webp" alt=""><img class="fl b" src="flora-bas.webp" alt="">
-    <h2>موعد الزفاف</h2>
-    <div class="date">الأربعاء 9 ديسمبر 2026</div>
-    <div class="count">
-      <div><b id="cd">0</b><span>أيام</span></div>
-      <div><b id="ch">0</b><span>ساعات</span></div>
-      <div><b id="cm">0</b><span>دقائق</span></div>
+    <div class="co h"></div><div class="co b"></div>
+    <div class="panel">
+      <div class="bism">بسم الله الرحمن الرحيم</div>
+      <div class="hello" id="hello">أحبتنا الكرام</div>
+      <div class="guest" id="guest"></div>
+      <div class="orn"><svg viewBox="-12 -12 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1"><ellipse rx="3" ry="8"/><ellipse rx="3" ry="8" transform="rotate(45)"/><ellipse rx="3" ry="8" transform="rotate(90)"/><ellipse rx="3" ry="8" transform="rotate(135)"/><circle r="1.6"/></g></svg></div>
+      <p>ندعوكم لمشاركتنا فرحة زفافنا</p>
+      <div class="pill" id="pill"></div>
     </div>
-    <div class="orn"><img src="orn.png" alt=""></div>
-    <h2 style="font-size:1.7rem">المكان<small>Le lieu</small></h2>
-    <div class="lieu">Restaurant la terrasse</div>
-    <a class="btn" target="_blank" rel="noopener" href="https://maps.app.goo.gl/ruD7TYwRiHvjWZYY6">عرض الاتجاهات<small>Itinéraire</small></a>
   </section>
 
   <section class="slide">
-    <img class="fl h" src="flora-haut.webp" alt=""><img class="fl b" src="flora-bas.webp" alt="">
-    <h2>هل ستحضرون؟<small>Serez-vous là ?</small></h2>
-    <div class="orn"><img src="orn.png" alt=""></div>
-    <button class="btn" data-s="yes">نعم، سنحضر<small>Oui, nous serons là</small></button>
-    <button class="btn" data-s="no">عذرًا، لا نستطيع<small>Désolé, nous ne pouvons pas</small></button>
-    <div class="thanks" id="thanks" hidden></div>
+    <div class="co h"></div><div class="co b"></div>
+    <div class="panel">
+      <h2>موعد الزفاف</h2>
+      <div class="date">الأربعاء 9 ديسمبر 2026</div>
+      <div class="count">
+        <div><b id="cd">0</b><span>أيام</span></div>
+        <div><b id="ch">0</b><span>ساعات</span></div>
+        <div><b id="cm">0</b><span>دقائق</span></div>
+      </div>
+      <div class="orn"><svg viewBox="-12 -12 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1"><ellipse rx="3" ry="8"/><ellipse rx="3" ry="8" transform="rotate(45)"/><ellipse rx="3" ry="8" transform="rotate(90)"/><ellipse rx="3" ry="8" transform="rotate(135)"/><circle r="1.6"/></g></svg></div>
+      <h2 style="font-size:1.7rem">المكان<small>Le lieu</small></h2>
+      <div class="lieu">Restaurant la terrasse</div>
+      <a class="btn" target="_blank" rel="noopener" href="https://maps.app.goo.gl/ruD7TYwRiHvjWZYY6">عرض الاتجاهات<small>Itinéraire</small></a>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="co h"></div><div class="co b"></div>
+    <div class="panel">
+      <h2>هل ستحضرون؟<small>Serez-vous là ?</small></h2>
+      <div class="orn"><svg viewBox="-12 -12 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1"><ellipse rx="3" ry="8"/><ellipse rx="3" ry="8" transform="rotate(45)"/><ellipse rx="3" ry="8" transform="rotate(90)"/><ellipse rx="3" ry="8" transform="rotate(135)"/><circle r="1.6"/></g></svg></div>
+      <button class="btn" data-s="yes">نعم، سنحضر<small>Oui, nous serons là</small></button>
+      <button class="btn" data-s="no">عذرًا، لا نستطيع<small>Désolé, nous ne pouvons pas</small></button>
+      <div class="thanks" id="thanks" hidden></div>
+    </div>
   </section>
 
 </main>
