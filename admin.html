@@ -30,20 +30,14 @@ button.main{background:var(--texte);color:#fff;margin-top:.9rem;width:100%}
 .btns{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}.btns button,.btns a{font-size:.85rem;padding:.4rem .8rem}
 a.wa{border:1px solid var(--texte);border-radius:2rem;color:var(--texte);text-decoration:none}
 .err{color:var(--non);margin-top:.5rem;min-height:1.3rem}
-.hide{display:none}
 </style>
 </head>
 <body>
 <h1>Invitations du mariage</h1>
 
-<div class="card" id="login">
-  <label for="pw">Mot de passe admin</label>
-  <input id="pw" type="password" autocomplete="current-password">
-  <button class="main" id="go">Entrer</button>
-  <div class="err" id="lerr"></div>
-</div>
+<div class="err" id="lerr"></div>
 
-<div id="app" class="hide">
+<div id="app">
   <div class="card">
     <div class="stats">
       <div><b id="sOk">0</b>confirmées</div>
@@ -82,7 +76,7 @@ a.wa{border:1px solid var(--texte);border-radius:2rem;color:var(--texte);text-de
 <script>
 const $ = id => document.getElementById(id);
 const CFG = window.CFG || {};
-let pass = "Mama@1984@2005", data = [], filter = "all", nbTouched = false;
+let pass = "ok", data = [], filter = "all", nbTouched = false;
 
 async function rpc(fn, args) {
   const r = await fetch(CFG.URL + "/rest/v1/rpc/" + fn, {
@@ -130,19 +124,35 @@ function render() {
     const cp = el("button", "", "Copier le lien"); cp.onclick = () => copy(link(r.id), cp);
     const wa = el("a", "wa", "WhatsApp"); wa.target = "_blank"; wa.rel = "noopener";
     wa.href = "https://wa.me/?text=" + encodeURIComponent("لا تكتمل فرحتنا إلا بحضوركم ومشاركتنا أجمل لحظات العمر\n" + link(r.id));
+    const ok = el("button", "", "✓ Confirmer");
+    ok.onclick = async () => {
+      let n = r.nb;
+      if (r.nb > 1) {
+        const v = prompt("Combien de personnes viendront ? (1 à " + r.nb + ")", r.coming || r.nb);
+        if (v === null) return;
+        n = parseInt(v, 10);
+        if (!(n >= 1 && n <= r.nb)) { alert("Nombre invalide"); return; }
+      }
+      await setStatus(r.id, "yes", n);
+    };
+    const no = el("button", "", "✗ Refuser"); no.onclick = () => setStatus(r.id, "no", null);
+    const wait = el("button", "", "↺ En attente"); wait.onclick = () => setStatus(r.id, "pending", null);
     const del = el("button", "", "Supprimer");
     del.onclick = async () => { if (confirm("Supprimer l’invitation de " + r.names + " ?")) { await rpc("admin_delete", { p_pass: pass, p_id: r.id }); load(); } };
-    btns.append(cp, wa, del); d.appendChild(btns); list.appendChild(d);
+    btns.append(cp, wa, ok, no, wait, del); d.appendChild(btns); list.appendChild(d);
   });
 }
 
-async function load() {
-  try { data = await rpc("admin_list", { p_pass: pass }); $("login").classList.add("hide"); $("app").classList.remove("hide"); render(); }
-  catch (e) { sessionStorage.removeItem("p"); $("app").classList.add("hide"); $("login").classList.remove("hide"); $("lerr").textContent = pass ? "Mot de passe incorrect, ou Supabase mal configuré (config.js)." : ""; pass = ""; }
+async function setStatus(id, status, coming) {
+  try { await rpc("admin_set_status", { p_pass: pass, p_id: id, p_status: status, p_coming: coming }); load(); }
+  catch (e) { alert("Échec : " + e.message); }
 }
 
-$("go").onclick = () => { pass = $("pw").value; sessionStorage.setItem("p", pass); load(); };
-$("pw").onkeydown = e => { if (e.key === "Enter") $("go").click(); };
+async function load() {
+  try { data = await rpc("admin_list", { p_pass: pass }); $("lerr").textContent = ""; render(); }
+  catch (e) { $("lerr").textContent = "Erreur de chargement : " + e.message; }
+}
+
 $("refresh").onclick = load;
 const inputs = () => [...document.querySelectorAll("#names input")];
 const filled = () => inputs().map(i => i.value.trim()).filter(Boolean);
@@ -162,10 +172,10 @@ $("add").onclick = async () => {
     const full = pre + " " + joinNames(names) + (suf ? " " + suf : "");
     await rpc("admin_create", { p_pass: pass, p_names: full, p_nb: nb });
     resetForm(); $("aerr").textContent = ""; filter = "all"; load();
-  } catch (e) { $("aerr").textContent = "Échec de la création." + e.message ; }
+  } catch (e) { $("aerr").textContent = "Échec : " + e.message; }
 };
-if (pass) load();
-setInterval(() => { if (pass && !$("app").classList.contains("hide")) load(); }, 30000);
+load();
+setInterval(load, 30000);
 </script>
 </body>
 </html>
