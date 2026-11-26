@@ -235,7 +235,7 @@ function mark(status) {
 $("guest").style.display = "none";
 (async () => {
   if (id && live) {
-        try { const [inv] = await rpc("get_invite", { p_id: id }); if (inv) { showCard(inv.names, inv.nb); mark(inv.status); ready = true; } else { alert("Invitation introuvable : " + id); } } catch (e) { alert("Erreur Supabase : " + e.message); }
+    try { const [inv] = await rpc("get_invite", { p_id: id }); if (inv) { showCard(inv.names, inv.nb); mark(inv.status); ready = true; } } catch (e) {}
   } else {
     showCard((q.get("invite") || "").trim(), parseInt(q.get("nb"), 10) || 0);
   }
@@ -317,4 +317,7 @@ slides.forEach(() => $("dots").appendChild(document.createElement("i")));
 const io = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) [...$("dots").children].forEach((d, k) => d.classList.toggle("on", slides[k] === e.target));
 }), { root: $("feed"), threshold: .6 });
-slides.forEach(sl => io.observ
+slides.forEach(sl => io.observe(sl));
+</script>
+</body>
+</html>
