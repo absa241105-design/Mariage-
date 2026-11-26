@@ -235,7 +235,7 @@ function mark(status) {
 $("guest").style.display = "none";
 (async () => {
   if (id && live) {
-    try { const [inv] = await rpc("get_invite", { p_id: id }); if (inv) { showCard(inv.names, inv.nb); mark(inv.status); ready = true; } } catch (e) {}
+        try { const [inv] = await rpc("get_invite", { p_id: id }); if (inv) { showCard(inv.names, inv.nb); mark(inv.status); ready = true; } else { alert("Invitation introuvable : " + id); } } catch (e) { alert("Erreur Supabase : " + e.message); }
   } else {
     showCard((q.get("invite") || "").trim(), parseInt(q.get("nb"), 10) || 0);
   }
